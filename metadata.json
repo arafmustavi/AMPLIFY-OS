@@ -1,0 +1,5 @@
+{
+  "name": "AMPLIFY-OS",
+  "description": "An explainable AI underwriting engine and secondary market risk passport system. Features the BEE Workbench for automated document analysis and Grasshopper for transparent loan trading.",
+  "requestFramePermissions": []
+}
