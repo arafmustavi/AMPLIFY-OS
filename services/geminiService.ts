@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { LoanApplicant, DecisionDriver } from "../types";
 
@@ -27,8 +28,16 @@ export const generateCreditMemo = async (docName: string, docContent: string): P
     });
 
     return response.text || "Failed to generate memo content.";
-  } catch (error) {
+  } catch (error: any) {
     console.error("Credit Memo Generation Error:", error);
+    
+    // Fix: If the request fails due to invalid/non-billing key, prompt for key selection
+    if (error?.message?.includes('Requested entity was not found.')) {
+      if (window.aistudio && typeof window.aistudio.openSelectKey === 'function') {
+        window.aistudio.openSelectKey();
+      }
+    }
+
     return "Error: Unable to generate credit memo at this time.";
   }
 };
@@ -86,6 +95,13 @@ export const explainRiskScore = async (loan: LoanApplicant, modifiers: { income:
   } catch (error: any) {
     console.error("Risk Analysis Error:", error);
     
+    // Fix: If the request fails due to invalid/non-billing key, prompt for key selection
+    if (error?.message?.includes('Requested entity was not found.')) {
+      if (window.aistudio && typeof window.aistudio.openSelectKey === 'function') {
+        window.aistudio.openSelectKey();
+      }
+    }
+
     // Check for quota or API specific errors
     if (error?.message?.includes('quota') || error?.message?.includes('429')) {
       return {

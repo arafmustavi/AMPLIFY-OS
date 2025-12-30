@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 
 interface LandingPageProps {
@@ -7,29 +8,27 @@ interface LandingPageProps {
 const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
   const [isInitializing, setIsInitializing] = useState(false);
 
-  // Fix: Implemented mandatory API key selection handshake as per Gemini rules
   const handleConnect = async () => {
     setIsInitializing(true);
     
     try {
-      // Check if an API key has already been selected
-      const hasKey = await window.aistudio.hasSelectedApiKey();
-      
-      if (!hasKey) {
-        // Open the dialog for user to select a paid project API key
-        await window.aistudio.openSelectKey();
+      // Safely check if the helper exists before calling
+      if (window.aistudio && typeof window.aistudio.hasSelectedApiKey === 'function') {
+        const hasKey = await window.aistudio.hasSelectedApiKey();
+        if (!hasKey) {
+          await window.aistudio.openSelectKey();
+        }
       }
     } catch (err) {
       console.warn("API Key Selection interaction encountered an issue, proceeding to application...", err);
     }
     
-    // Race condition: Assume success after triggering selection and proceed to app
+    // Proceed to app
     onStart();
   };
 
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center relative overflow-hidden font-sans">
-      {/* Abstract background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/10 blur-[120px] rounded-full"></div>
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-600/10 blur-[120px] rounded-full"></div>
@@ -67,7 +66,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
             <div className="absolute inset-0 bg-gradient-to-r from-blue-100 to-white opacity-0 group-hover:opacity-100 transition-opacity"></div>
           </button>
           
-          {/* Fix: Added link to billing documentation as required */}
           <a 
             href="https://ai.google.dev/gemini-api/docs/billing"
             target="_blank"

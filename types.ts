@@ -1,3 +1,5 @@
+
+
 export enum RiskLevel {
   LOW = 'Low',
   MEDIUM = 'Medium',
@@ -60,4 +62,18 @@ export interface DocumentFile {
     sourcePage: number;
     confidence: number;
   }[];
+}
+
+// Global window type definitions for the AI Studio key selection handshake
+declare global {
+  // Fix: Declare AIStudio as a global interface to allow proper type merging with the environment.
+  interface AIStudio {
+    hasSelectedApiKey: () => Promise<boolean>;
+    openSelectKey: () => Promise<void>;
+  }
+
+  interface Window {
+    // Fix: Use the named AIStudio interface and add readonly modifier to satisfy identical modifier requirements.
+    readonly aistudio: AIStudio;
+  }
 }
